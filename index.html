@@ -7,6 +7,7 @@
     <link rel="icon" href="img/logo_eMarket.png">
     <title>e-Market</title>
     <link rel="stylesheet" href="includes/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <script src="includes/jquery-3.7.1.js"></script>
 </head>
 <style>
     body {
@@ -129,13 +130,57 @@
                         <span id="emptyErrorMessage"></span>
                     </div>
                 </div>
-
-
             </form>
         </div>
     </div>
     <img src="img/logo_name_slogan.png" alt="Logo e-Market" style="width: 500px;">
 
 </body>
+
+<script>
+    $(document).ready(function () {
+        $("#btnLogin").click(function () {
+            var email = $("#email").val();
+            var senha = $("#senha").val();
+
+            if (email == '' || senha == '') {
+                console.log("Preencha tudo");
+                return;
+            } else {
+                console.log("Email: " + email + "Senha: " + senha);
+
+
+                var data = {
+                    email: email,
+                    senha: senha
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "banco_eMarket/autentificar_usuario.php",
+                    dataType: "json",
+                    data: data,
+
+                    success: function (response) {
+
+                        if (response.result === 'success') { // Caso seja validado corretamente, envia o usuário para a tela inicial do sistema
+                            window.location.href = 'pagina_de_sucesso.html';
+                        } else if (response.result === 'failed') { // Caso a senha esteja incorreta, mostra ao usuário
+                            $("#senhaErrorMessage").text("Senha incorreta ou E-mail incorreto"); // Mensagem de erro
+                            $("#senhaError").removeClass("d-none");
+                            $("#senha").addClass("is-invalid"); // Elemento para indicar campo como inválido
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error); // Log do erro no console
+                        alert('Erro de comunicação com o servidor. Detalhes: ' + error); // Exibir mensagem de erro ao usuário
+                    }
+                });
+
+            }
+        });
+    });
+
+</script>
 
 </html>
